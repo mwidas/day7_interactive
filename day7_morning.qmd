@@ -1,0 +1,70 @@
+---
+title: "day7_interactive"
+format: html
+editor: visual
+execute: 
+  warning: false
+---
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+```
+
+## Data Wrangling Refresher
+
+-   starting from penguins write a single piped sequence in which you
+
+    -   only include penguins at dream and biscoe islands
+
+    -   remove the year and sex variables
+
+    -   add a new column body_mass_kg with penguin mass converted from g to kg
+
+    -   rename the island variable to location
+
+```{r}
+penguins_update <- penguins %>% 
+  filter(island %in% c("Dream", "Biscoe")) %>% 
+  select(-sex, -year) %>% 
+  mutate(body_mass_kg = body_mass_g / 1000) %>% 
+  rename(location = island)
+  
+```
+
+-   starting from penguins
+
+    -   limit to adelie penguins
+
+    -   remove flipper length in mm is na (! is.na) or drop_na
+
+    -   group data by sex
+
+    -   create a summary table that contains the mean, sd, and sample size of flipper lengths for male and female adelie penguins
+
+```{r}
+penguins2 <- penguins %>% 
+  filter(species == "Adelie") %>% 
+  drop_na(flipper_length_mm, sex) %>% 
+  group_by(sex) %>% 
+  summarize(mean_flipper = mean(flipper_length_mm),
+            sd_flipper = sd(flipper_length_mm),
+            sample_size = n())
+
+penguins2
+  
+```
+
+-   counts of observations in the dataset by species, islands, and sex
+
+```{r}
+penguins %>% 
+  group_by(species, island, sex) %>% 
+  summarize(sample_size = n())
+
+#OR
+
+#count is wrapping together group_by + summarize + n() to get counts of observations
+penguins %>% 
+  count(species, island, sex, name = "sex")
+```
