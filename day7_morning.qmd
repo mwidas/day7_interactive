@@ -68,3 +68,22 @@ penguins %>%
 penguins %>% 
   count(species, island, sex, name = "sex")
 ```
+
+```{r}
+animals <- data.frame(
+  stringsAsFactors = FALSE,
+          location = c("lagoon", "bluff", "creek", "oaks", "bluff"),
+           species = c("bobcat", "coyote", "fox", "squirrel", "bobcat"),
+          maturity = c("adult", "juvenile", "adult", "juvenile", "adult")
+)
+```
+
+```{r}
+sites <- data.frame(
+  stringsAsFactors = FALSE,
+          location = c("beach", "lagoon", "bluff", "oaks"),
+    full_site_name = c("Goleta Beach","UCSB Lagoon",
+                       "Ellwood Mesa","Fremont Campground"),
+      jurisdiction = c("SB City", "UCSB", "SB City", "USFS")
+)
+```
