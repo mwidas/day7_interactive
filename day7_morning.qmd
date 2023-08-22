@@ -9,6 +9,7 @@ execute:
 ```{r}
 library(tidyverse)
 library(palmerpenguins)
+library(lubridate)
 ```
 
 ## Data Wrangling Refresher
@@ -114,4 +115,187 @@ left_join_example <- left_join(animals, sites)
 
 ```{r}
 inner_join_example <- inner_join(animals, sites)
+```
+
+# Afternoon Session
+
+## Date-times with lubridate()
+
+-   ymd - year month day
+
+-   mdy - month day year
+
+-   dmy - day month year
+
+```{r}
+#making a string
+"03-15-1998"
+
+#applying package
+mydate1 <- lubridate::mdy("03-15-1998")
+
+#checking class
+class(mydate1)
+```
+
+```{r}
+mydate2 <- "11/7/2003"
+
+lubridate::mdy(mydate2)
+```
+
+```{r}
+mydate3 <- "08-Jun-1974"
+
+lubridate::dmy(mydate3)
+```
+
+```{r}
+mydate4 <- 20041003
+
+lubridate::ymd(mydate4)
+```
+
+Can we break the lubridate parsing functions?
+
+```{r}
+mydate5 <- "06-20-2001"
+# issue is that i am telling it to format it wrong as there is no month = 20
+# lubridate::dmy(mydate5)
+```
+
+## Adding times to dates
+
+```{r}
+time1 <- "2020-08-12 11:18"
+
+lubridate::ymd_hm(time1)
+```
+
+-   Parse June 2, 1982 at 4PM UTC (16:00) as a date in R
+
+    ```{r}
+    time2 <- lubridate::mdy_hm("June 2, 1982 4:00PM")
+    ```
+
+```{r}
+with_tz(time2, "America/Los_Angeles" )
+```
+
+```{r}
+#what time is it now
+now <- with_tz(Sys.time(), "Europe/Belgrade")
+now
+
+```
+
+## Access different parts of date-times
+
+```{r}
+#what day is in now
+day(now)
+
+#what week of the year is it
+week(now)
+
+#what year is it
+year(now)
+
+minute(now)
+```
+
+```{r}
+urchin_counts <- data.frame(
+  date = c("October 12, 2004", "October 18, 2007", "Feb 12, 2003", "Feb 14, 2008"),
+  species = c("purple", "red", "red", "red"),
+  size_mm = c(19, 24, 18, 11)
+)
+
+class(urchin_counts$date)
+```
+
+```{r}
+#how to find the mean urchin size by month
+urchin_mean_by_month <- urchin_counts %>% 
+  mutate(date = lubridate::mdy(date)) %>% 
+  mutate(month = lubridate::month(date)) %>% 
+  group_by(month) %>% 
+  summarize(mean_size = mean(size_mm))
+  
+```
+
+## Strings with Stringr
+
+-   use str_detect to detect a string pattern
+
+```{r}
+#making a string
+my_string <- "Teddy loves salmon and kibble and toys."
+```
+
+```{r}
+str_detect(my_string, pattern = "kibble")
+
+str_detect(my_string, pattern = "hot weather")
+```
+
+```{r}
+my_string_2 <- c("burrito", "fish taco", "Taco salad", "super burrito")
+
+str_detect(my_string_2, pattern = "taco")
+```
+
+-   only keep rows in starwars dataset if skywalker is in the name
+
+```{r}
+starwars %>% 
+  filter(str_detect(name, pattern = "Skywalker"))
+```
+
+-   use str_replace to replace things
+
+```{r}
+starwars %>% 
+  mutate(name_new = str_replace(name, pattern = "Sky", replacement = "Fire"))
+```
+
+-   whitespace can get tricky
+
+    -   str_trim to get rid of leading and trailing whitespace
+
+    -   str_squish to get rid of leand leading and trailing and interior
+
+```{r}
+my_string_3 <- "      Hi my name     is Teddy ! ! !     "
+```
+
+```{r}
+str_trim(my_string_3)
+```
+
+```{r}
+str_squish(my_string_3)
+```
+
+-   case conversions
+
+```{r}
+str_to_lower(my_string_3)
+```
+
+```{r}
+str_to_upper(my_string_3)
+```
+
+```{r}
+str_to_title(my_string_3)
+```
+
+```{r}
+str_to_sentence(my_string_3)
+```
+
+```{r}
+starwars %>% 
+  mutate(species_lower = str_to_lower(species))
 ```
